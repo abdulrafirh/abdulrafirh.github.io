@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etynso's Page</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- KaTeX Stylesheet -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" xintegrity="sha384-n8MVd4RsNIU0KOVEMckDMOe6bvJOiXDGztp1TTi7Gv24srP2E2GnpGmgJLeQ3SEq" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header id="page-header">
+        <a href="/" class="logo">Etynso</a>
+        <nav>
+            <a href="/about">About</a>
+            <a href="/blog">Blog</a>
+        </nav>
+        <div class="header-right">
+            <button class="terminal-button" id="open-terminal-btn">Terminal</button>
+        </div>
+    </header>
+
+    <main class="container" id="main-content"></main>
+    
+    <div id="status-log-container"></div>
+
+    <!-- Terminal Overlay -->
+    <div id="terminal-overlay">
+        <button class="terminal-close-button" id="close-terminal-btn">&times;</button>
+        <div class="terminal" id="terminal-window">
+            <div id="output">
+                <pre class="welcome-message">
+ _____ ____ ____ _   _ ____  ____      ____      _    ____    ____ ____  
+| ____|  _ \_   _| \ | / ___|/ ___|    / ___|    / \  |  _ \  / ___| __ ) 
+|  _| | | | || | |  \| \___ \\___ \   | |  _    / _ \ | | | || |  _|  _ \ 
+| |___| |_| || | | |\  |___) |___) |  | |_| |  / ___ \| |_| || |_| | |_) |
+|_____|____/ |_| |_| \_|____||____/    \____| /_/   \_|____/  \____|____/ 
+                </pre>
+                <p>Type 'help' to see a list of available commands.</p><br>
+            </div>
+            <div class="input-line" id="input-line">
+                <span class="prompt" id="prompt">guest@etynso.io:~$</span>
+                <input type="text" id="command-input" autocomplete="off">
+                <span class="cursor"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- KaTeX and Marked.js Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" xintegrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+    <!-- ADDED: KaTeX auto-render extension script -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" xintegrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <script src="terminal.js" defer></script>
+    <script src="app.js" defer></script>
+</body>
+</html>

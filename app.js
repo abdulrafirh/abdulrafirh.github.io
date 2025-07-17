@@ -59,7 +59,7 @@ const handleLocation = async () => {
     const route = routes[path] || routes[404];
     const html = await fetch(route.path).then(data => data.text());
     mainContent.innerHTML = html;
-    document.title = `Etynso's Page - ${route.title}`;
+    document.title = `${route.title}`;
 
     if (path === '/') {
         if (!sessionStorage.getItem('animationDone')) {
@@ -112,7 +112,7 @@ function renderWriteupsPage() {
 function renderArticleCards() {
     const articlesList = document.getElementById('articles-list');
     articlesList.innerHTML = window.writeupsData.map(post => `
-        <a href="/writeups/${post.id}" class="article-card" data-tags="${post.tags.join(',')}">
+        <a href="/blog/${post.id}" class="article-card" data-tags="${post.tags.join(',')}">
             <div class="article-card-content">
                 <h2>${post.title}</h2>
                 <div class="article-card-meta">${new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>
@@ -239,11 +239,11 @@ async function renderSinglePost(postId) {
 
     if (!postData) {
         mainContent.innerHTML = '<h1>404 - Post Not Found</h1>';
-        document.title = "Etynso's Page - Not Found";
+        document.title = "Not Found";
         return;
     }
 
-    document.title = `Etynso's Page - ${postData.title}`;
+    document.title = `${postData.title}`;
     
     try {
         const markdown = await fetch(postData.contentPath).then(res => res.text());

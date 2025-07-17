@@ -17,16 +17,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = new Function(`${text}; return writeupsData;`)();
             window.writeupsData = data;
             
-            // This needs to be called AFTER data is loaded
             if(window.initializeFileSystem) window.initializeFileSystem();
 
             handleLocation();
         });
 
     document.body.addEventListener('click', e => {
-        if (e.target.matches('a:not([href^="http"])')) {
+        const link = e.target.closest('a:not([href^="http"])');
+        if (link) {
             e.preventDefault();
-            navigate(e.target.getAttribute('href'));
+            navigate(link.getAttribute('href'));
         }
     });
 

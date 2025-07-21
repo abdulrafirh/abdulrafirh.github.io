@@ -59,7 +59,7 @@ const handleLocation = async () => {
     const route = routes[path] || routes[404];
     const html = await fetch(route.path).then(data => data.text());
     mainContent.innerHTML = html;
-    document.title = `${route.title}`;
+    document.title = `Etynso's Page - ${route.title}`;
 
     if (path === '/') {
         if (!sessionStorage.getItem('animationDone')) {

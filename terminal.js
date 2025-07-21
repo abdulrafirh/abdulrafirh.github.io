@@ -28,7 +28,9 @@ let fileSystem = {
 function initializeFileSystem() {
     if (window.writeupsData) {
         window.writeupsData.forEach(post => {
-            fileSystem['/blog'].children[post.id] = { type: 'file', path: `/blog/${post.id}` };
+            const postPath = `/blog/${post.id}`;
+            fileSystem['/blog'].children[post.id] = { type: 'file', path: postPath };
+            fileSystem[postPath] = { type: 'file', children: null };
         });
     }
 }
@@ -40,17 +42,8 @@ function updatePrompt() {
     promptElement.textContent = `guest@etynso.io:${pathForPrompt}$`;
 }
 
-// Make setCwd globally available so app.js can call it
 window.setTerminalCwd = (path) => {
-    // Ensure the path exists in our simplified FS, default to root if not
-    if (path === '/blog' || path === '/about' || path === '/') {
-        cwd = path;
-    } else if (path.startsWith('/blog/')) {
-        // For individual posts, the CWD is the blog directory
-        cwd = '/blog';
-    } else {
-        cwd = '/';
-    }
+    cwd = path;
     updatePrompt();
 };
 
@@ -96,8 +89,37 @@ if (commandInput) {
                 historyIndex = -1;
                 this.value = "";
             }
+        } else if (event.key === "Tab") {
+            event.preventDefault();
+            handleTabCompletion(this);
         }
     });
+}
+
+// --- Tab Completion Logic ---
+function handleTabCompletion(inputElement) {
+    const input = inputElement.value;
+    const parts = input.split(' ');
+    const toComplete = parts[parts.length - 1];
+
+    if (!toComplete) return;
+
+    const currentDirNode = fileSystem[cwd];
+    if (!currentDirNode || currentDirNode.type !== 'directory') return;
+
+    const children = Object.keys(currentDirNode.children);
+    const matches = children.filter(child => child.startsWith(toComplete));
+
+    if (matches.length === 1) {
+        const match = matches[0];
+        const completion = match;
+        parts[parts.length - 1] = completion;
+        inputElement.value = parts.join(' ');
+    } else if (matches.length > 1) {
+        const output = matches.join('  ');
+        printToOutput(`${promptElement.textContent} ${input}`);
+        printToOutput(output, false);
+    }
 }
 
 function printToOutput(text, isHTML = false) {
@@ -151,21 +173,21 @@ function command_clear() {
 }
 
 function command_ls() {
-    const currentDir = fileSystem[cwd];
-    if (!currentDir || !currentDir.children) {
-        printToOutput('ls: cannot access current directory.');
+    const currentDirNode = fileSystem[cwd];
+    if (!currentDirNode || currentDirNode.type !== 'directory') {
+        printToOutput(`..`);
         return;
     }
 
-    let output = '';
-    const children = Object.keys(currentDir.children);
+    const children = Object.keys(currentDirNode.children);
     if (children.length === 0) {
         printToOutput('');
         return;
     }
 
+    let output = '';
     children.forEach(item => {
-        const node = currentDir.children[item];
+        const node = currentDirNode.children[item];
         if (node.type === 'directory') {
             output += `<span style="color: var(--secondary); font-weight: bold;">${item}/</span>  `;
         } else {
@@ -183,21 +205,22 @@ function command_cd(args) {
     }
 
     if (target === '..') {
-        if (cwd !== '/') {
-            // Simple case: just go to root
-            cwd = '/';
-            navigate('/');
-            updatePrompt();
-        }
+        if (cwd === '/') return;
+        const parentPath = cwd.substring(0, cwd.lastIndexOf('/')) || '/';
+        navigate(parentPath);
         return;
     }
 
-    const currentDir = fileSystem[cwd];
-    const destination = currentDir.children[target];
+    const currentDirNode = fileSystem[cwd];
+    if (currentDirNode.type !== 'directory') {
+        printToOutput(`cd: not a directory: ${cwd}`);
+        return;
+    }
 
+    const destination = currentDirNode.children[target];
     if (destination) {
         printToOutput(`Navigating to ${destination.path}...`);
-        navigate(destination.path); // Let app.js handle the CWD update via setTerminalCwd
+        navigate(destination.path);
     } else {
         printToOutput(`cd: no such file or directory: ${target}`);
     }
